@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login</title>
+<style>
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;}
+body{
+  font-family:Tahoma,Verdana,Arial,sans-serif;font-size:13px;color:#000;
+  display:flex;align-items:center;justify-content:center;padding:14px;
+  background:
+    radial-gradient(ellipse 120% 40% at 30% 100%, #4f9a2c 0%, #3d8a1f 55%, transparent 56%),
+    radial-gradient(ellipse 100% 35% at 90% 105%, #62b13a 0%, #4a9a26 55%, transparent 56%),
+    linear-gradient(#2f6fd6 0%, #6aa8f0 55%, #bfe0ff 100%);
+  background-attachment:fixed;
+}
+.window{
+  width:100%;max-width:380px;background:#ece9d8;
+  border:3px solid #0a3fc4;border-top:0;border-radius:9px 9px 4px 4px;
+  box-shadow:4px 6px 18px rgba(0,0,0,.5);
+}
+.titlebar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:6px 6px 6px 10px;margin:0 -3px;
+  background:linear-gradient(#3a8cff 0%,#0a5be0 12%,#0950d4 50%,#0a4bc8 88%,#0b3fa8 100%);
+  border-radius:8px 8px 0 0;color:#fff;font-weight:bold;font-size:14px;text-shadow:1px 1px 1px #0a2a80;
+}
+.titlebar .btns{display:flex;gap:3px;}
+.titlebar .btns span{
+  width:22px;height:22px;border:1px solid #fff;border-radius:4px;
+  background:linear-gradient(135deg,#6aa3ff,#1c5fe0);
+  font-size:12px;text-align:center;line-height:20px;text-shadow:none;
+}
+.titlebar .btns span.x{background:linear-gradient(135deg,#f0a08a,#d1401c);}
+.content{padding:18px;}
+.icone{text-align:center;font-size:44px;margin-bottom:6px;}
+h1{margin:0 0 14px;text-align:center;font-size:17px;color:#0a2a80;}
+.field{margin-bottom:12px;}
+.field label{display:block;margin-bottom:3px;color:#0046d5;font-weight:bold;}
+input[type=text],input[type=password]{
+  width:100%;padding:7px 8px;font:14px Tahoma,Verdana,sans-serif;
+  border:1px solid #7f9db9;background:#fff;
+}
+input:focus{outline:none;border-color:#316ac5;box-shadow:0 0 0 2px #b9d1f7;}
+.msg{display:none;margin-bottom:12px;padding:8px 10px;border:1px solid;}
+.msg.erro{background:#fff4c4;border-color:#c8a000;color:#7a4f00;}
+.msg.ok{background:#e3f6dc;border-color:#3b8f2a;color:#1d5a10;}
+.xp-btn{
+  display:block;width:100%;margin-top:4px;padding:10px;font:bold 15px Tahoma,Verdana,sans-serif;color:#fff;cursor:pointer;
+  border:1px solid #1a6b0e;border-radius:12px;
+  background:linear-gradient(#6fd45a 0%,#3ea82b 50%,#2d8f1c 100%);
+  text-shadow:1px 1px 1px #145a0a;box-shadow:inset 0 1px 0 rgba(255,255,255,.6);
+}
+.xp-btn.azul{
+  border-color:#0a3fc4;text-shadow:1px 1px 1px #0a2a80;
+  background:linear-gradient(#6aa3ff 0%,#2a6ee8 50%,#1352c8 100%);
+}
+.xp-btn.cinza{
+  color:#000;text-shadow:none;border-color:#7a7a7a;
+  background:linear-gradient(#fff 0%,#ece9d8 85%,#d6d0c0 100%);
+}
+.xp-btn:hover{filter:brightness(1.08);}
+.xp-btn:active{filter:brightness(.92);}
+.xp-btn:disabled{filter:grayscale(.7);cursor:not-allowed;}
+.hidden{display:none !important;}
+.dica{font-size:11px;color:#555;margin:-6px 0 12px;}
+</style>
+</head>
+<body>
+
+<div class="window">
+  <div class="titlebar">
+    <span id="tituloJanela">🔐 Login</span>
+    <div class="btns"><span>_</span><span>▢</span><span class="x">✕</span></div>
+  </div>
+
+  <div class="content">
+    <div class="icone" id="icone">👤</div>
+    <h1 id="titulo">Faça login para continuar</h1>
+
+    <div class="msg" id="msg"></div>
+
+    <!-- LOGIN -->
+    <form id="formLogin">
+      <div class="field">
+        <label for="usuario">Nome de usuário</label>
+        <input type="text" id="usuario" autocomplete="username" autocapitalize="none" spellcheck="false">
+      </div>
+      <div class="field">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" autocomplete="current-password">
+      </div>
+      <button type="submit" class="xp-btn">Entrar</button>
+      <button type="button" class="xp-btn azul" id="btnAbrirCadastro">Cadastrar usuário</button>
+    </form>
+
+    <!-- AUTORIZAÇÃO PARA CADASTRAR -->
+    <form id="formAutoriza" class="hidden">
+      <div class="field">
+        <label for="codigoAutoriza">Senha de autorização</label>
+        <input type="password" id="codigoAutoriza" autocomplete="off">
+      </div>
+      <div class="dica">Peça esta senha ao responsável para poder cadastrar um usuário.</div>
+      <button type="submit" class="xp-btn" id="btnAutorizar">Continuar</button>
+      <button type="button" class="xp-btn cinza" id="btnVoltarAutoriza">Voltar</button>
+    </form>
+
+    <!-- CADASTRO -->
+    <form id="formCadastro" class="hidden">
+      <div class="field">
+        <label for="novoUsuario">Nome de usuário</label>
+        <input type="text" id="novoUsuario" autocomplete="off" autocapitalize="none" spellcheck="false">
+      </div>
+      <div class="dica">Mínimo 3 caracteres: letras, números, ponto, traço ou sublinhado.</div>
+      <div class="field">
+        <label for="novaSenha">Senha</label>
+        <input type="password" id="novaSenha" autocomplete="new-password">
+      </div>
+      <div class="dica">Mínimo 6 caracteres.</div>
+      <div class="field">
+        <label for="confirmaSenha">Confirmar senha</label>
+        <input type="password" id="confirmaSenha" autocomplete="new-password">
+      </div>
+      <button type="submit" class="xp-btn">Cadastrar</button>
+      <button type="button" class="xp-btn cinza" id="btnVoltar">Voltar</button>
+    </form>
+  </div>
+</div>
+
+<script>
+// Página que abre depois do login correto (esta página é o index.html do site,
+// então o destino precisa ser OUTRO arquivo: troque pelo nome da segunda página)
+var DESTINO = "inicio.html";
+
+// Chave onde os usuários cadastrados ficam salvos (neste navegador)
+var CHAVE = "usuarios_cadastrados";
+
+var formLogin = document.getElementById('formLogin');
+var formCadastro = document.getElementById('formCadastro');
+var formAutoriza = document.getElementById('formAutoriza');
+var msg = document.getElementById('msg');
+
+// Hash SHA-256 de "cadastro:" + senha de autorização (a senha em si não fica no código)
+var HASH_AUTORIZACAO = "66e60477e4c7814d1dc997db07297bcb9ec255bd6d5dc19864e4422827124168";
+
+// só vira true depois de digitar a senha de autorização correta
+var autorizado = false;
+var errosAutoriza = 0;
+var bloqueioAutoriza = 0;
+
+function mostrar(texto, tipo){
+  msg.textContent = (tipo === 'ok' ? '✅ ' : '⚠️ ') + texto;
+  msg.className = 'msg ' + tipo;
+  msg.style.display = 'block';
+}
+function limpar(){ msg.style.display = 'none'; }
+
+function lerUsuarios(){
+  try {
+    var t = localStorage.getItem(CHAVE);
+    var o = t ? JSON.parse(t) : {};
+    return (o && typeof o === 'object' && !Array.isArray(o)) ? o : {};
+  } catch(e){ return {}; }
+}
+function salvarUsuarios(o){
+  try { localStorage.setItem(CHAVE, JSON.stringify(o)); return true; }
+  catch(e){ return false; }
+}
+
+// a senha nunca é guardada em texto: só o hash SHA-256 de "usuario:senha"
+function hashSenha(usuario, senha){
+  if(!(window.crypto && crypto.subtle)){
+    return Promise.reject(new Error('sem-crypto'));
+  }
+  return crypto.subtle.digest('SHA-256', new TextEncoder().encode(usuario + ':' + senha))
+    .then(function(buf){
+      return Array.from(new Uint8Array(buf)).map(function(b){
+        return b.toString(16).padStart(2, '0');
+      }).join('');
+    });
+}
+
+function irParaLogin(){
+  autorizado = false;
+  formCadastro.classList.add('hidden');
+  formAutoriza.classList.add('hidden');
+  formLogin.classList.remove('hidden');
+  document.getElementById('tituloJanela').textContent = '🔐 Login';
+  document.getElementById('titulo').textContent = 'Faça login para continuar';
+  document.getElementById('icone').textContent = '👤';
+  document.getElementById('usuario').focus();
+}
+function irParaAutorizacao(){
+  limpar();
+  autorizado = false;
+  formLogin.classList.add('hidden');
+  formCadastro.classList.add('hidden');
+  formAutoriza.classList.remove('hidden');
+  document.getElementById('tituloJanela').textContent = '🔑 Autorização';
+  document.getElementById('titulo').textContent = 'Digite a senha de autorização';
+  document.getElementById('icone').textContent = '🔑';
+  document.getElementById('codigoAutoriza').value = '';
+  document.getElementById('codigoAutoriza').focus();
+}
+function irParaCadastro(){
+  limpar();
+  formLogin.classList.add('hidden');
+  formAutoriza.classList.add('hidden');
+  formCadastro.classList.remove('hidden');
+  document.getElementById('tituloJanela').textContent = '📝 Cadastrar usuário';
+  document.getElementById('titulo').textContent = 'Criar novo usuário';
+  document.getElementById('icone').textContent = '📝';
+  document.getElementById('novoUsuario').focus();
+}
+
+document.getElementById('btnAbrirCadastro').addEventListener('click', irParaAutorizacao);
+document.getElementById('btnVoltar').addEventListener('click', function(){ limpar(); irParaLogin(); });
+document.getElementById('btnVoltarAutoriza').addEventListener('click', function(){ limpar(); irParaLogin(); });
+
+/* ---------- SENHA DE AUTORIZAÇÃO ---------- */
+formAutoriza.addEventListener('submit', function(e){
+  e.preventDefault();
+  limpar();
+
+  var agora = Date.now();
+  if(agora < bloqueioAutoriza){
+    mostrar('Muitas tentativas. Aguarde ' + Math.ceil((bloqueioAutoriza - agora) / 1000) + 's.', 'erro');
+    return;
+  }
+
+  var codigo = document.getElementById('codigoAutoriza').value.trim();
+  if(!codigo){
+    mostrar('Digite a senha de autorização.', 'erro');
+    return;
+  }
+
+  hashSenha('cadastro', codigo).then(function(hash){
+    if(hash === HASH_AUTORIZACAO){
+      errosAutoriza = 0;
+      autorizado = true;
+      document.getElementById('codigoAutoriza').value = '';
+      irParaCadastro();
+    } else {
+      errosAutoriza++;
+      document.getElementById('codigoAutoriza').value = '';
+      if(errosAutoriza >= 5){
+        errosAutoriza = 0;
+        bloqueioAutoriza = Date.now() + 30000;
+        mostrar('Senha incorreta. Muitas tentativas: aguarde 30s.', 'erro');
+      } else {
+        mostrar('Senha de autorização incorreta.', 'erro');
+      }
+    }
+  }).catch(function(){
+    mostrar('Este navegador não permite a verificação. Abra o site por https:// (ex.: GitHub Pages).', 'erro');
+  });
+});
+
+/* ---------- LOGIN ---------- */
+formLogin.addEventListener('submit', function(e){
+  e.preventDefault();
+  limpar();
+
+  var usuario = document.getElementById('usuario').value.trim().toLowerCase();
+  var senha = document.getElementById('senha').value;
+
+  if(!usuario || !senha){
+    mostrar('Digite o nome de usuário e a senha.', 'erro');
+    return;
+  }
+
+  var usuarios = lerUsuarios();
+  if(Object.keys(usuarios).length === 0){
+    mostrar('Nenhum usuário cadastrado ainda. Clique em "Cadastrar usuário".', 'erro');
+    return;
+  }
+
+  hashSenha(usuario, senha).then(function(hash){
+    var esperado = Object.prototype.hasOwnProperty.call(usuarios, usuario) ? usuarios[usuario] : null;
+    if(esperado && esperado === hash){
+      try {
+        sessionStorage.setItem('logado', '1');
+        sessionStorage.setItem('usuario_logado', usuario);
+      } catch(err){}
+      window.location.href = DESTINO;
+    } else {
+      document.getElementById('senha').value = '';
+      document.getElementById('senha').focus();
+      mostrar('Usuário ou senha incorretos.', 'erro');
+    }
+  }).catch(function(){
+    mostrar('Este navegador não permite a verificação. Abra o site por https:// (ex.: GitHub Pages).', 'erro');
+  });
+});
+
+/* ---------- CADASTRO ---------- */
+formCadastro.addEventListener('submit', function(e){
+  e.preventDefault();
+  limpar();
+
+  if(!autorizado){
+    irParaAutorizacao();
+    mostrar('Digite a senha de autorização para cadastrar.', 'erro');
+    return;
+  }
+
+  var usuario = document.getElementById('novoUsuario').value.trim().toLowerCase();
+  var senha = document.getElementById('novaSenha').value;
+  var confirma = document.getElementById('confirmaSenha').value;
+
+  if(!/^[a-z0-9._-]{3,}$/.test(usuario)){
+    mostrar('Nome de usuário inválido. Use ao menos 3 caracteres: letras, números, ponto, traço ou sublinhado.', 'erro');
+    return;
+  }
+  if(senha.length < 6){
+    mostrar('A senha deve ter pelo menos 6 caracteres.', 'erro');
+    return;
+  }
+  if(senha !== confirma){
+    mostrar('As senhas não são iguais.', 'erro');
+    return;
+  }
+
+  var usuarios = lerUsuarios();
+  if(Object.prototype.hasOwnProperty.call(usuarios, usuario)){
+    mostrar('Este nome de usuário já está cadastrado.', 'erro');
+    return;
+  }
+
+  hashSenha(usuario, senha).then(function(hash){
+    usuarios[usuario] = hash;
+    if(!salvarUsuarios(usuarios)){
+      mostrar('Não foi possível salvar o cadastro neste navegador.', 'erro');
+      return;
+    }
+    formCadastro.reset();
+    irParaLogin();
+    document.getElementById('usuario').value = usuario;
+    document.getElementById('senha').focus();
+    mostrar('Usuário cadastrado com sucesso! Faça login.', 'ok');
+  }).catch(function(){
+    mostrar('Este navegador não permite o cadastro. Abra o site por https:// (ex.: GitHub Pages).', 'erro');
+  });
+});
+
+document.getElementById('usuario').focus();
+</script>
+</body>
+</html>
